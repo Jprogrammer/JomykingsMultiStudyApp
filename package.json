@@ -1,0 +1,13 @@
+{
+"name": "jomy-kings-multi-study-platform",
+"version": "1.0.0",
+"description": "A static HTML application hosted via Expo, required for defining the project structure.",
+"main": "index.html",
+"scripts": {
+"start": "echo 'This is a static site; deployed as a website.'",
+"test": "echo 'No tests defined for static site.'"
+},
+"dependencies": {
+"react": "18.2.0"
+}
+}
