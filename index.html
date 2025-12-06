@@ -6,7 +6,10 @@
     <title>Jomy Kings Multi-Study Platform</title>
     <!-- Load Lucide Icons for Navigation -->
     <script type="module" src="https://unpkg.com/lucide@latest"></script>
-    
+    <!-- Load Prism for Code Syntax Highlighting -->
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+
     <style>
         /* ================================================= */
         /* === CUSTOM GLASSMORPHISM CSS (Enhanced & Consolidated) === */
@@ -150,7 +153,7 @@
         }
 
         /* BUTTONS */
-        .card button, .open-ai-button {
+        .card button, .open-ai-button, .tab-button {
             background: linear-gradient(135deg, #4da9ff, #1c6db3);
             border: none;
             padding: 12px 18px;
@@ -166,11 +169,15 @@
             transition: 0.25s;
         }
 
-        .card button:hover, .open-ai-button:hover {
+        .card button:hover, .open-ai-button:hover, .tab-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 25px rgba(77,169,255,0.45);
         }
 
+        .tab-button.active {
+            background: linear-gradient(135deg, #1c6db3, #4da9ff);
+        }
+        
         /* CHAT-SPECIFIC STYLES (AI Tutor View) */
         #tutor-view {
             overflow: hidden; /* Prevent this whole view from scrolling */
@@ -231,9 +238,63 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* TOOL SPECIFIC STYLES */
+        .tab-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px; /* for scrollbar visibility */
+        }
+
+        .tab-buttons .tab-button {
+            flex-shrink: 0;
+            padding: 8px 12px;
+            margin-top: 0;
+            border-radius: 8px;
+            font-size: 13px;
+            width: auto;
+        }
+
+        .tool-tab {
+            display: none;
+            padding-top: 10px;
+        }
+        .tool-tab.active {
+            display: block;
+        }
+
+        #code-output, #test-output, #offline-joshua-response, #research-output {
+            min-height: 150px;
+            overflow: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.02);
+            margin-top: 15px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        #code-output code, #test-output code {
+            font-size: 13px;
+        }
+
+        textarea, input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .error { color: #ff6b6b; }
+        .success { color: #7ef1b2; }
     </style>
 </head>
-<body>
+<body onload="switchView('home', document.getElementById('nav-home')); lucide.createIcons();">
 
     <!-- HEADER -->
     <header>
@@ -251,34 +312,34 @@
             <div class="card">
                 <div class="flex items-center mb-3">
                     <i data-lucide="brain-circuit" class="w-6 h-6 mr-3 text-red-400"></i>
-                    <h3>Joshua AI Assistant</h3>
+                    <h3>Joshua AI Assistant (Online)</h3>
                 </div>
-                <p>Your personal companion for complex calculations, concepts, and multi-subject tutoring.</p>
+                <p>Your personal companion for complex calculations, concepts, and multi-subject tutoring using **real-time Gemini AI**.</p>
                 <button class="open-ai-button" onclick="switchView('tutor', document.getElementById('nav-tutor'))">Open AI Tutor</button>
             </div>
 
-            <!-- Calculators Card (Links to Calculator View) -->
+            <!-- Calculators Card (Links to Tools View) -->
             <div class="card">
                 <div class="flex items-center mb-3">
-                    <i data-lucide="calculator" class="w-6 h-6 mr-3 text-yellow-400"></i>
-                    <h3>SciCalc Tools</h3>
+                    <i data-lucide="flask-conical" class="w-6 h-6 mr-3 text-yellow-400"></i>
+                    <h3>Offline Tools & Sandbox</h3>
                 </div>
-                <p>Molar mass, chemical equation balancing, and advanced math tools.</p>
-                <button onclick="switchView('calculator', document.getElementById('nav-calculator'))">Explore Calculators</button>
+                <p>Molar mass simulators, chemical equation logic, code execution sandboxes, and offline knowledge retrieval.</p>
+                <button onclick="switchView('tools', document.getElementById('nav-tools'))">Open Tools & Sandbox</button>
             </div>
 
-            <!-- Research/Periodic Table Card (Links to Periodic View) -->
+            <!-- Data/Periodic Table Card (Links to Periodic View) -->
             <div class="card">
                 <div class="flex items-center mb-3">
-                    <i data-lucide="flask-conical" class="w-6 h-6 mr-3 text-blue-400"></i>
-                    <h3>Chemistry & Periodic Data</h3>
+                    <i data-lucide="grid-3x3" class="w-6 h-6 mr-3 text-blue-400"></i>
+                    <h3>Periodic Table & Research Stubs</h3>
                 </div>
-                <p>Interactive Periodic Table, notes, summaries, and complex research topics.</p>
-                <button onclick="switchView('periodic', document.getElementById('nav-periodic'))">View Periodic Table</button>
+                <p>Interactive Periodic Table and deep subject research notes. *Features are coming soon.*</p>
+                <button onclick="switchView('periodic', document.getElementById('nav-periodic'))">View Research Data</button>
             </div>
         </div>
 
-        <!-- 2. AI TUTOR VIEW (The main Chat Interface) -->
+        <!-- 2. AI TUTOR VIEW (The main Chat Interface - Gemini API) -->
         <div id="tutor-view" class="content-view hidden">
             <!-- Chat Window -->
             <div id="chat-window" class="chat-window">
@@ -293,52 +354,75 @@
                     type="text" 
                     id="user-input" 
                     placeholder="Ask your question (e.g., 'Balance H2 + O2', 'Explain momentum')..." 
-                    class="flex-grow p-3 bg-gray-700 text-white border border-gray-600 rounded-xl focus:ring-[#4da9ff] focus:border-[#4da9ff] transition duration-150"
+                    class="flex-grow p-3"
                     onkeydown="if(event.key === 'Enter') sendMessage()"
-                    style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.08); padding: 12px; border-radius: 12px;"
                 >
                 <button 
                     id="send-button" 
                     onclick="sendMessage()" 
-                    class="ml-3 p-3 bg-[#4da9ff] text-white rounded-full hover:bg-blue-600 transition duration-150 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="ml-3 p-3 rounded-full shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label="Send Message"
-                    style="min-width: 50px; height: 50px; padding: 0;"
+                    style="min-width: 50px; height: 50px; padding: 0; margin-top: 0;"
                 >
                     <i data-lucide="send" class="w-5 h-5 mx-auto my-auto"></i>
                 </button>
             </div>
         </div>
 
-        <!-- 3. CALCULATOR VIEW (Replaces pages/calculator.html) -->
-        <div id="calculator-view" class="content-view hidden">
-            <h2 class="text-2xl font-semibold mb-6 text-center text-[#4da9ff]">SciCalc Tools</h2>
-            
-            <!-- Molar Mass Calculator Card -->
-            <div class="card">
-                <div class="flex items-center mb-3">
-                    <i data-lucide="sigma" class="w-6 h-6 mr-3 text-yellow-400"></i>
-                    <h3>Molar Mass Calculator</h3>
-                </div>
-                <p>
-                    Calculate the molecular weight of any compound instantly. *Coming Soon: Interactive Module*
-                </p>
-                <button>Use Molar Mass Tool</button>
+        <!-- 3. TOOLS & SANDBOX VIEW (Merged complex functionality) -->
+        <div id="tools-view" class="content-view hidden">
+            <h2 class="text-xl font-semibold mb-3 text-[#4da9ff]">Tools & Sandbox</h2>
+
+            <div class="tab-buttons">
+                <button id="tab-edu-btn" class="tab-button active" onclick="showToolTab('edu', this)">Education Chat</button>
+                <button id="tab-code-btn" class="tab-button" onclick="showToolTab('code', this)">Code Tutor</button>
+                <button id="tab-test-btn" class="tab-button" onclick="showToolTab('test', this)">Test Lab</button>
+                <button id="tab-research-btn" class="tab-button" onclick="showToolTab('research', this)">Research Chat</button>
             </div>
 
-            <!-- Chemical Equation Balancer Card -->
-            <div class="card">
-                <div class="flex items-center mb-3">
-                    <i data-lucide="scale-3d" class="w-6 h-6 mr-3 text-blue-400"></i>
-                    <h3>Equation Balancer</h3>
+            <!-- Education Tab (Offline Q&A) -->
+            <div id="edu" class="tool-tab active">
+                <p class="text-sm mb-3 text-gray-400">Ask simple, fact-based questions for instant, local responses (no internet needed).</p>
+                <textarea id="offline-ai-input" placeholder="Ask Joshua offline (e.g., 'molar mass h2o')..." rows="3"></textarea>
+                <div style="display:flex;gap:8px">
+                    <button class="w-1/2" style="margin-top:0;" onclick="processOfflineInput(document.getElementById('offline-ai-input').value)">Get Offline Answer</button>
                 </div>
-                <p>
-                    Automatically balance complex chemical reactions. *Coming Soon: Interactive Module*
-                </p>
-                <button>Use Balancer Tool</button>
+                <div id="offline-joshua-response"></div>
+            </div>
+
+            <!-- Code Tab (Execution Sandbox) -->
+            <div id="code" class="tool-tab">
+                <p class="text-sm mb-3 text-gray-400">Write simple Python/JS code for simulation and explanation. (No actual JS execution).</p>
+                <textarea id="code-input" placeholder="Write Python / JS / HTML here..." rows="8"></textarea>
+                <div style="display:flex;gap:8px">
+                    <button class="w-1/2" style="margin-top:0;" onclick="runAdvancedOfflineCode()">Simulate Run</button>
+                    <button class="w-1/2" style="margin-top:0;" onclick="explainCode()">Explain Logic</button>
+                </div>
+                <pre id="code-output"><code class="language-python">Code simulation output appears here.</code></pre>
+            </div>
+
+            <!-- Test Tab (Scratchpad) -->
+            <div id="test" class="tool-tab">
+                <p class="text-sm mb-3 text-gray-400">A dedicated text editor for running quick scratchpad tests or drafting complex formulas.</p>
+                <textarea id="test-input" placeholder="Test Lab: run experiments here..." rows="8"></textarea>
+                <div style="display:flex;gap:8px">
+                    <button class="w-1/2" style="margin-top:0;" onclick="runTestLabCode()">Simulate Test Run</button>
+                </div>
+                <pre id="test-output"><code class="language-python">Test run simulation output appears here.</code></pre>
+            </div>
+
+             <!-- Research Tab (Offline Knowledge Retrieval) -->
+            <div id="research" class="tool-tab">
+                <p class="text-sm mb-3 text-gray-400">Ask broad subject research questions for a simulated, locally-stored knowledge summary.</p>
+                <textarea id="research-input" placeholder="Research questions (e.g., 'summarize electrochemistry')..." rows="3"></textarea>
+                <div style="display:flex;gap:8px">
+                    <button class="w-1/2" style="margin-top:0;" onclick="processOfflineResearch(document.getElementById('research-input').value)">Get Research Summary</button>
+                </div>
+                <div id="research-output">Offline research summary will appear here.</div>
             </div>
         </div>
 
-        <!-- 4. PERIODIC VIEW (Replaces pages/periodic.html & research.html) -->
+        <!-- 4. PERIODIC VIEW (Dedicated for Future Chemistry & Research Data) -->
         <div id="periodic-view" class="content-view hidden">
             <h2 class="text-2xl font-semibold mb-6 text-center text-[#4da9ff]">Periodic Table & Data</h2>
 
@@ -348,7 +432,7 @@
                     <h3>Interactive Periodic Table</h3>
                 </div>
                 <p>
-                    Access detailed information on all elements. View electronic configurations, isotopes, and properties. *Coming Soon*
+                    Access detailed information on all elements. View electronic configurations, isotopes, and properties. *Coming Soon: Next Feature Update*
                 </p>
                 <button>View Table</button>
             </div>
@@ -356,16 +440,16 @@
             <div class="card">
                 <div class="flex items-center mb-3">
                     <i data-lucide="book-open" class="w-6 h-6 mr-3 text-red-400"></i>
-                    <h3>Research & Study Notes</h3>
+                    <h3>Advanced Research & Study Notes</h3>
                 </div>
                 <p>
-                    Curated summaries and tutorials on advanced science topics (Chemistry, Physics, Biology). *Coming Soon*
+                    Curated summaries and tutorials on advanced science topics (Chemistry, Physics, Biology). *Coming Soon: Next Feature Update*
                 </p>
                 <button>Open Study Hub</button>
             </div>
         </div>
         
-        <!-- 5. SETTINGS VIEW (Replaces pages/settings.html) -->
+        <!-- 5. SETTINGS VIEW -->
         <div id="settings-view" class="content-view hidden">
             <h2 class="text-2xl font-semibold mb-6 text-center text-[#4da9ff]">Settings & Support</h2>
             
@@ -406,193 +490,4 @@
             <i data-lucide="brain-circuit"></i>
             <span>Joshua AI</span>
         </button>
-        <button id="nav-calculator" onclick="switchView('calculator', this)">
-            <i data-lucide="calculator"></i>
-            <span>Tools</span>
-        </button>
-        <button id="nav-periodic" onclick="switchView('periodic', this)">
-            <i data-lucide="flask-conical"></i>
-            <span>Data</span>
-        </button>
-        <button id="nav-settings" onclick="switchView('settings', this)">
-            <i data-lucide="settings"></i>
-            <span>Settings</span>
-        </button>
-    </div>
-
-    <script>
-        // ==========================================================
-        // === JAVASCRIPT LOGIC (Consolidated SPA Logic) ===
-        // ==========================================================
-        
-        // --- Core Variables ---
-        const chatWindow = document.getElementById('chat-window');
-        const userInput = document.getElementById('user-input');
-        const sendButton = document.getElementById('send-button');
-        
-        const apiKey = ""; // Canvas provides it at runtime.
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-        
-        // FINAL SYSTEM PROMPT: Now multi-purpose (Updated per user request)
-        const systemPrompt = "You are Joshua, the world-class, multi-purpose AI Tutor and SciCalc assistant for Jomy Kings. Your expertise covers all academic subjects, specializing in Chemistry, Math, and Physics from O-Level through Higher Institution level. You must embody an encouraging, confident, and human personality. Your core skills are: 1) Solve complex calculations and show step-by-step logic, 2) Explain concepts clearly, 3) Provide structured, accurate answers using proper chemical notation and mathematical formatting. Always check real-time data using the search tool if necessary.";
-
-        // --- Initialization and View Management ---
-        window.onload = () => {
-            lucide.createIcons();
-            // Start on the Home view
-            switchView('home', document.getElementById('nav-home')); 
-        };
-
-        function switchView(viewId, buttonElement) {
-            // Hide all views
-            document.querySelectorAll('.content-view').forEach(view => {
-                view.classList.add('hidden');
-            });
-            // Show target view
-            const targetView = document.getElementById(`${viewId}-view`);
-            if (targetView) targetView.classList.remove('hidden');
-
-            // Deactivate all nav buttons
-            document.querySelectorAll('.nav-bar button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            // Activate the clicked button
-            if (buttonElement) {
-                buttonElement.classList.add('active');
-            }
-
-            // Scroll chat window to bottom if switching to tutor view
-            if (viewId === 'tutor') {
-                // Ensure chat window is properly sized before scrolling
-                setTimeout(() => {
-                    if (chatWindow) chatWindow.scrollTop = chatWindow.scrollHeight;
-                }, 100);
-            }
-            
-            // Re-create icons for the newly visible view
-            lucide.createIcons(); 
-        }
-
-        // --- Settings Logic (Theme Toggle Stub) ---
-        function toggleTheme() {
-            // Theme switching is a stub for future enhancement.
-            alert("Theme switching features will be enabled in a future update! For now, enjoy the professional Dark Theme.");
-        }
-
-        // --- Chat Functions ---
-        function appendMessage(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', sender === 'user' ? 'user-message' : 'ai-message');
-            // Use LaTeX syntax for math/chemistry notation
-            messageDiv.innerHTML = text.replace(/\n/g, '<br>');
-            chatWindow.appendChild(messageDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-            return messageDiv;
-        }
-
-        function showLoading() {
-            const loadingDiv = document.createElement('div');
-            loadingDiv.classList.add('spinner', 'ai-message');
-            loadingDiv.id = 'loading-indicator';
-            chatWindow.appendChild(loadingDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-        }
-
-        function hideLoading() {
-            const indicator = document.getElementById('loading-indicator');
-            if (indicator) {
-                indicator.remove();
-            }
-        }
-        
-        // --- Main Send Message Logic (Gemini API Integration) ---
-        async function sendMessage() {
-            const userText = userInput.value.trim();
-            if (!userText) return;
-
-            // Disable input/button and show loading
-            sendButton.disabled = true;
-            userInput.value = '';
-            appendMessage(userText, 'user');
-            showLoading();
-
-            try {
-                const payload = {
-                    contents: [{ parts: [{ text: userText }] }],
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
-                    tools: [{ "google_search": {} }], 
-                };
-
-                // Exponential Backoff implementation for reliability
-                let response = null;
-                let delay = 1000;
-                const maxRetries = 4;
-                
-                for (let i = 0; i < maxRetries; i++) {
-                    response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (response.ok) {
-                        break;
-                    }
-                    console.log(`API request failed, retrying in ${delay / 1000}s...`);
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2;
-                    if (i === maxRetries - 1) throw new Error("Max retries reached.");
-                }
-
-                if (!response || !response.ok) {
-                    throw new Error(`API call failed with status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                const candidate = result.candidates?.[0];
-                
-                let aiText = "Oops! Looks like the AI response failed. Please try again in a moment. (Error A6)";
-                let sourcesHtml = '';
-
-                if (candidate && candidate.content?.parts?.[0]?.text) {
-                    aiText = candidate.content.parts[0].text;
-                    
-                    // Process Grounding Sources
-                    const groundingMetadata = candidate.groundingMetadata;
-                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
-                        const sources = groundingMetadata.groundingAttributions
-                            .map(attribution => ({
-                                uri: attribution.web?.uri,
-                                title: attribution.web?.title,
-                            }))
-                            .filter(source => source.uri && source.title);
-
-                        if (sources.length > 0) {
-                            sourcesHtml = '<div class="mt-2 text-xs text-gray-400 border-t border-gray-600 pt-2">';
-                            sourcesHtml += 'Source(s): ';
-                            sources.forEach((source, index) => {
-                                sourcesHtml += `<a href="${source.uri}" target="_blank" class="text-blue-400 hover:text-blue-300 underline">${source.title}</a>${index < sources.length - 1 ? ' | ' : ''}`;
-                            });
-                            sourcesHtml += '</div>';
-                        }
-                    }
-                }
-                
-                // Display the AI response and sources
-                hideLoading();
-                appendMessage(aiText + sourcesHtml, 'ai');
-
-            } catch (error) {
-                console.error("Gemini API Error:", error);
-                hideLoading();
-                appendMessage("An error occurred while contacting the AI Tutor. This might be a temporary network issue. Please check your connection and try again.", 'ai');
-            } finally {
-                // Re-enable input/button
-                sendButton.disabled = false;
-                userInput.focus();
-            }
-        }
-    </script>
-</body>
-</html>
-
+        <
