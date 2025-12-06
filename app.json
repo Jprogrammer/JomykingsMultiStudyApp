@@ -16,6 +16,17 @@
     },
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jomykings.multistudyplatform" 
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0b0e13"
+      },
+      "package": "com.jomykings.multistudyplatform"
+    }
   }
 }
