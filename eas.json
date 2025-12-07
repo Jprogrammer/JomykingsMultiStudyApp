@@ -1,33 +1,17 @@
 {
-  "expo": {
-    "name": "Jomy Kings Multi-Study Platform",
-    "slug": "jomy-kings-multi-study-platform",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0b0e13"
+  "cli": {
+    "version": ">= 3.7.2"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.jomykings.multistudyplatform" 
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0b0e13"
-      },
-      "package": "com.jomykings.multistudyplatform"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png",
-      "output": "static" 
+    "production": {
+      "autoIncrement": true
     }
+  },
+  "submit": {
+    "production": {}
   }
 }
