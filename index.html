@@ -4,490 +4,1091 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jomy Kings Multi-Study Platform</title>
-    <!-- Load Lucide Icons for Navigation -->
-    <script type="module" src="https://unpkg.com/lucide@latest"></script>
-    <!-- Load Prism for Code Syntax Highlighting -->
-    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.css" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* ================================================= */
-        /* === CUSTOM GLASSMORPHISM CSS (Enhanced & Consolidated) === */
-        /* ================================================= */
-        /* GLOBAL SETTINGS */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Poppins", sans-serif;
+        :root {
+            --bg-color: #0b0e13;
+            --card-color: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --accent-color: #00bcd4; /* Cyan/Teal for Joshua AI */
         }
 
         body {
-            background: #0b0e13;
-            color: #e6e6e6;
-            padding-bottom: 90px; /* Space for fixed bottom nav */
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
 
-        /* HEADER */
-        header {
-            text-align: center;
-            padding: 25px 10px;
-            background: linear-gradient(135deg, #0d1520, #09111a);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.25);
-            z-index: 10;
+        .glass-card {
+            background-color: var(--card-color);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
         }
 
-        header h1 {
-            font-size: 20px; /* Adjusted for mobile space */
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: #4da9ff; /* Blue Accent */
-            text-shadow: 0 0 10px rgba(77,169,255,0.4);
-        }
-
-        /* NAVIGATION BAR (Fixed Bottom) */
-        .nav-bar {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            background: rgba(18, 24, 32, 0.95);
-            backdrop-filter: blur(8px);
-            padding: 12px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 -3px 12px rgba(0,0,0,0.35);
-            z-index: 1000;
-        }
-
-        .nav-bar button {
-            all: unset; /* Remove button default styling */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #7a8694;
-            text-decoration: none;
-            font-size: 11px;
-            font-weight: 500;
-            transition: 0.3s;
-            cursor: pointer;
-            padding: 5px;
-        }
-        
-        .nav-bar button i {
-            margin-bottom: 4px;
-            width: 20px;
-            height: 20px;
-            transition: color 0.3s;
-        }
-
-        .nav-bar .active {
-            color: #4da9ff; /* Blue Accent */
-            font-weight: 600;
-            text-shadow: 0 0 8px rgba(77,169,255,0.6);
-        }
-
-        /* CONTAINER (Main Content Area) */
-        main {
-            flex-grow: 1;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .content-view {
-            padding: 20px;
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            height: 100%; /* Important for chat layout */
-            overflow-y: auto; /* Allows scrolling within the view */
-            position: absolute; /* Allows views to stack and hide/show cleanly */
-            top: 65px; /* Below the header */
-            bottom: 80px; /* Above the nav-bar */
-            left: 0;
-            right: 0;
-            background: #0b0e13;
-            transition: opacity 0.4s ease-in-out;
-        }
-
-        .hidden {
-            display: none;
-            opacity: 0;
-        }
-
-        /* GLASSMORPHISM CARDS */
-        .card {
-            background: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(8px);
-            border-radius: 18px;
-            padding: 18px;
-            margin-bottom: 18px;
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 8px 18px rgba(0,0,0,0.25);
-            transition: 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
-        }
-
-        .card h3, .card h2 {
-            font-size: 18px;
-            margin-bottom: 8px;
-            color: #4da9ff;
-            font-weight: 600;
-        }
-
-        .card p {
-            font-size: 14px;
-            color: #bfc9d4;
-            margin-bottom: 12px;
-        }
-
-        /* BUTTONS */
-        .card button, .open-ai-button, .tab-button {
-            background: linear-gradient(135deg, #4da9ff, #1c6db3);
-            border: none;
-            padding: 12px 18px;
-            font-size: 14px;
-            border-radius: 12px;
-            color: #fff;
-            margin-top: 10px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            box-shadow: 0 5px 15px rgba(77,169,255,0.35);
-            transition: 0.25s;
-        }
-
-        .card button:hover, .open-ai-button:hover, .tab-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(77,169,255,0.45);
-        }
-
-        .tab-button.active {
-            background: linear-gradient(135deg, #1c6db3, #4da9ff);
-        }
-        
-        /* CHAT-SPECIFIC STYLES (AI Tutor View) */
-        #tutor-view {
-            overflow: hidden; /* Prevent this whole view from scrolling */
-        }
-        .chat-window {
+        /* Responsive Main Content Area */
+        .main-content {
+            padding: 1rem;
+            padding-bottom: 70px; /* Space for the fixed nav */
             flex-grow: 1;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding-bottom: 12px;
-            scroll-behavior: smooth;
+            max-width: 100%;
         }
 
-        .message {
+        /* Message Bubbles */
+        .message-bubble {
             max-width: 85%;
-            padding: 12px 16px;
-            border-radius: 20px;
-            line-height: 1.4;
-            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
-            font-size: 14px;
-        }
-
-        .ai-message {
-            align-self: flex-start;
-            background-color: rgba(255, 255, 255, 0.06); /* Glassmorphism background */
-            color: #e6edf3;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-bottom-left-radius: 4px;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            margin-bottom: 0.75rem;
+            word-wrap: break-word;
+            white-space: pre-wrap;
         }
         .user-message {
+            background-color: #1e3a8a; /* Dark Blue */
             align-self: flex-end;
-            background: linear-gradient(135deg, #4da9ff, #1c6db3); /* Blue Gradient for User */
-            color: #ffffff;
-            border-bottom-right-radius: 4px;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .ai-message {
+            background-color: #1f2937; /* Dark Gray */
+            align-self: flex-start;
+            border-bottom-left-radius: 0.25rem;
+        }
+        .ai-message strong {
+            color: var(--accent-color);
         }
 
-        /* Input Area Fix for Chat View */
-        #tutor-view .input-area {
-            padding: 12px 0 0 0; 
-            margin: 0px -20px -20px -20px; /* Align with container edges */
-            background-color: #0b0e13; /* Ensure it covers the background */
-            flex-shrink: 0; /* Prevents input area from being shrunk by chat window */
+        /* Utility specific styling */
+        .utility-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
         }
-        
-        /* Loading Spinner */
-        .spinner {
+        .utility-item {
+            text-align: center;
+            cursor: pointer;
+            padding: 1rem;
+            font-size: 0.875rem;
+        }
+        .utility-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        /* Loader */
+        .loader {
             border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #4da9ff !important;
+            border-top: 4px solid var(--accent-color);
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             animation: spin 1s linear infinite;
-            align-self: flex-start;
+            margin: 0.5rem;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        /* TOOL SPECIFIC STYLES */
-        .tab-buttons {
+        /* Input area styling */
+        .input-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 20;
+            background-color: var(--bg-color);
+            padding: 0.75rem 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Fixed Navigation */
+        .fixed-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 30;
+            height: 60px;
+            background-color: rgba(11, 14, 19, 0.9);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border-color);
             display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-            overflow-x: auto;
-            padding-bottom: 5px; /* for scrollbar visibility */
+            justify-content: space-around;
+            align-items: center;
         }
-
-        .tab-buttons .tab-button {
-            flex-shrink: 0;
-            padding: 8px 12px;
-            margin-top: 0;
-            border-radius: 8px;
-            font-size: 13px;
-            width: auto;
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.25rem;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+            cursor: pointer;
+            font-size: 0.75rem;
+            width: 25%;
         }
-
-        .tool-tab {
-            display: none;
-            padding-top: 10px;
+        .nav-item.active {
+            color: var(--accent-color);
+            font-weight: 600;
         }
-        .tool-tab.active {
-            display: block;
-        }
-
-        #code-output, #test-output, #offline-joshua-response, #research-output {
-            min-height: 150px;
-            overflow: auto;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.02);
-            margin-top: 15px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        
-        #code-output code, #test-output code {
-            font-size: 13px;
-        }
-
-        textarea, input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #fff;
-            margin-bottom: 12px;
-        }
-
-        .error { color: #ff6b6b; }
-        .success { color: #7ef1b2; }
     </style>
 </head>
-<body onload="switchView('home', document.getElementById('nav-home')); lucide.createIcons();">
+<body>
 
-    <!-- HEADER -->
-    <header>
-        <h1>JOMY KINGS MULTI-STUDY PLATFORM</h1>
+    <!-- Header -->
+    <header class="p-4 flex items-center justify-between glass-card sticky top-0 z-10">
+        <h1 class="text-xl font-extrabold flex items-center text-white">
+            <span class="text-3xl mr-2" style="color: var(--accent-color);">J</span>omy Kings Platform
+        </h1>
     </header>
 
-    <!-- MAIN CONTENT VIEWS (Single Page Application Structure) -->
-    <main>
+    <!-- Main Content Area -->
+    <main id="main-content" class="main-content flex flex-col space-y-4"></main>
 
-        <!-- 1. HOME VIEW (Default/Dashboard) -->
-        <div id="home-view" class="content-view">
-            <h2 class="text-2xl font-semibold mb-6 text-center text-[#4da9ff]">Your Study Dashboard</h2>
-
-            <!-- AI Assistant Card (Links to Tutor View) -->
-            <div class="card">
-                <div class="flex items-center mb-3">
-                    <i data-lucide="brain-circuit" class="w-6 h-6 mr-3 text-red-400"></i>
-                    <h3>Joshua AI Assistant (Online)</h3>
-                </div>
-                <p>Your personal companion for complex calculations, concepts, and multi-subject tutoring using **real-time Gemini AI**.</p>
-                <button class="open-ai-button" onclick="switchView('tutor', document.getElementById('nav-tutor'))">Open AI Tutor</button>
-            </div>
-
-            <!-- Calculators Card (Links to Tools View) -->
-            <div class="card">
-                <div class="flex items-center mb-3">
-                    <i data-lucide="flask-conical" class="w-6 h-6 mr-3 text-yellow-400"></i>
-                    <h3>Offline Tools & Sandbox</h3>
-                </div>
-                <p>Molar mass simulators, chemical equation logic, code execution sandboxes, and offline knowledge retrieval.</p>
-                <button onclick="switchView('tools', document.getElementById('nav-tools'))">Open Tools & Sandbox</button>
-            </div>
-
-            <!-- Data/Periodic Table Card (Links to Periodic View) -->
-            <div class="card">
-                <div class="flex items-center mb-3">
-                    <i data-lucide="grid-3x3" class="w-6 h-6 mr-3 text-blue-400"></i>
-                    <h3>Periodic Table & Research Stubs</h3>
-                </div>
-                <p>Interactive Periodic Table and deep subject research notes. *Features are coming soon.*</p>
-                <button onclick="switchView('periodic', document.getElementById('nav-periodic'))">View Research Data</button>
-            </div>
+    <!-- Fixed Navigation Bar -->
+    <nav class="fixed-nav">
+        <div class="nav-item active" data-view="chat">
+            <i class="fas fa-robot text-lg"></i>
+            <span>AI Tutor</span>
         </div>
-
-        <!-- 2. AI TUTOR VIEW (The main Chat Interface - Gemini API) -->
-        <div id="tutor-view" class="content-view hidden">
-            <!-- Chat Window -->
-            <div id="chat-window" class="chat-window">
-                <div class="ai-message message">
-                    Hello! I am your Multi-Study AI Tutor, **Joshua**. I specialize in **Chemistry, Math, Physics, and more** for O-Level up to Higher Institution. I can solve calculations, explain concepts, and provide real-time information. How can I help you excel today?
-                </div>
-            </div>
-            
-            <!-- Input Area -->
-            <div class="input-area flex items-center">
-                <input 
-                    type="text" 
-                    id="user-input" 
-                    placeholder="Ask your question (e.g., 'Balance H2 + O2', 'Explain momentum')..." 
-                    class="flex-grow p-3"
-                    onkeydown="if(event.key === 'Enter') sendMessage()"
-                >
-                <button 
-                    id="send-button" 
-                    onclick="sendMessage()" 
-                    class="ml-3 p-3 rounded-full shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                    aria-label="Send Message"
-                    style="min-width: 50px; height: 50px; padding: 0; margin-top: 0;"
-                >
-                    <i data-lucide="send" class="w-5 h-5 mx-auto my-auto"></i>
-                </button>
-            </div>
+        <div class="nav-item" data-view="tools">
+            <i class="fas fa-toolbox text-lg"></i>
+            <span>Tools & Sandbox</span>
         </div>
-
-        <!-- 3. TOOLS & SANDBOX VIEW (Merged complex functionality) -->
-        <div id="tools-view" class="content-view hidden">
-            <h2 class="text-xl font-semibold mb-3 text-[#4da9ff]">Tools & Sandbox</h2>
-
-            <div class="tab-buttons">
-                <button id="tab-edu-btn" class="tab-button active" onclick="showToolTab('edu', this)">Education Chat</button>
-                <button id="tab-code-btn" class="tab-button" onclick="showToolTab('code', this)">Code Tutor</button>
-                <button id="tab-test-btn" class="tab-button" onclick="showToolTab('test', this)">Test Lab</button>
-                <button id="tab-research-btn" class="tab-button" onclick="showToolTab('research', this)">Research Chat</button>
-            </div>
-
-            <!-- Education Tab (Offline Q&A) -->
-            <div id="edu" class="tool-tab active">
-                <p class="text-sm mb-3 text-gray-400">Ask simple, fact-based questions for instant, local responses (no internet needed).</p>
-                <textarea id="offline-ai-input" placeholder="Ask Joshua offline (e.g., 'molar mass h2o')..." rows="3"></textarea>
-                <div style="display:flex;gap:8px">
-                    <button class="w-1/2" style="margin-top:0;" onclick="processOfflineInput(document.getElementById('offline-ai-input').value)">Get Offline Answer</button>
-                </div>
-                <div id="offline-joshua-response"></div>
-            </div>
-
-            <!-- Code Tab (Execution Sandbox) -->
-            <div id="code" class="tool-tab">
-                <p class="text-sm mb-3 text-gray-400">Write simple Python/JS code for simulation and explanation. (No actual JS execution).</p>
-                <textarea id="code-input" placeholder="Write Python / JS / HTML here..." rows="8"></textarea>
-                <div style="display:flex;gap:8px">
-                    <button class="w-1/2" style="margin-top:0;" onclick="runAdvancedOfflineCode()">Simulate Run</button>
-                    <button class="w-1/2" style="margin-top:0;" onclick="explainCode()">Explain Logic</button>
-                </div>
-                <pre id="code-output"><code class="language-python">Code simulation output appears here.</code></pre>
-            </div>
-
-            <!-- Test Tab (Scratchpad) -->
-            <div id="test" class="tool-tab">
-                <p class="text-sm mb-3 text-gray-400">A dedicated text editor for running quick scratchpad tests or drafting complex formulas.</p>
-                <textarea id="test-input" placeholder="Test Lab: run experiments here..." rows="8"></textarea>
-                <div style="display:flex;gap:8px">
-                    <button class="w-1/2" style="margin-top:0;" onclick="runTestLabCode()">Simulate Test Run</button>
-                </div>
-                <pre id="test-output"><code class="language-python">Test run simulation output appears here.</code></pre>
-            </div>
-
-             <!-- Research Tab (Offline Knowledge Retrieval) -->
-            <div id="research" class="tool-tab">
-                <p class="text-sm mb-3 text-gray-400">Ask broad subject research questions for a simulated, locally-stored knowledge summary.</p>
-                <textarea id="research-input" placeholder="Research questions (e.g., 'summarize electrochemistry')..." rows="3"></textarea>
-                <div style="display:flex;gap:8px">
-                    <button class="w-1/2" style="margin-top:0;" onclick="processOfflineResearch(document.getElementById('research-input').value)">Get Research Summary</button>
-                </div>
-                <div id="research-output">Offline research summary will appear here.</div>
-            </div>
+        <div class="nav-item" data-view="about">
+            <i class="fas fa-info-circle text-lg"></i>
+            <span>About</span>
         </div>
+    </nav>
 
-        <!-- 4. PERIODIC VIEW (Dedicated for Future Chemistry & Research Data) -->
-        <div id="periodic-view" class="content-view hidden">
-            <h2 class="text-2xl font-semibold mb-6 text-center text-[#4da9ff]">Periodic Table & Data</h2>
-
-            <div class="card">
-                <div class="flex items-center mb-3">
-                    <i data-lucide="grid-3x3" class="w-6 h-6 mr-3 text-green-400"></i>
-                    <h3>Interactive Periodic Table</h3>
-                </div>
-                <p>
-                    Access detailed information on all elements. View electronic configurations, isotopes, and properties. *Coming Soon: Next Feature Update*
-                </p>
-                <button>View Table</button>
-            </div>
-
-            <div class="card">
-                <div class="flex items-center mb-3">
-                    <i data-lucide="book-open" class="w-6 h-6 mr-3 text-red-400"></i>
-                    <h3>Advanced Research & Study Notes</h3>
-                </div>
-                <p>
-                    Curated summaries and tutorials on advanced science topics (Chemistry, Physics, Biology). *Coming Soon: Next Feature Update*
-                </p>
-                <button>Open Study Hub</button>
-            </div>
+    <!-- AI Chat Input Area (Only visible on Chat view) -->
+    <div id="chat-input-area" class="input-area hidden">
+        <div class="flex items-center space-x-2">
+            <textarea id="chat-input" class="w-full p-3 glass-card bg-gray-700/50 resize-none h-12 overflow-y-hidden focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all" placeholder="Ask Joshua AI about Chemistry, Math, or anything..."></textarea>
+            <button id="send-button" class="bg-cyan-600 hover:bg-cyan-700 text-white p-3 rounded-full shadow-lg transition duration-150 active:scale-95 disabled:bg-gray-600" disabled>
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script type="module">
+        // ----------------------------------------------------------------------
+        // 1. FIREBASE SETUP & AUTH
+        // ----------------------------------------------------------------------
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, addDoc, setDoc, onSnapshot, collection, query, orderBy, limit, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
-        <!-- 5. SETTINGS VIEW -->
-        <div id="settings-view" class="content-view hidden">
-            <h2 class="text-2xl font-semibold mb-6 text-center text-[#4da9ff]">Settings & Support</h2>
+        // Use setLogLevel('Debug') for detailed console logging of Firestore operations
+        setLogLevel('Debug');
+
+        let db = null;
+        let auth = null;
+        let userId = null;
+        let isAuthReady = false;
+
+        // Global variables provided by the Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        
+        // **ROBUSTNESS FIX:** Check if the variable is defined AND a string before attempting to parse.
+        let firebaseConfig = {};
+        if (typeof __firebase_config !== 'undefined' && typeof __firebase_config === 'string' && __firebase_config.trim().length > 0) {
+            try {
+                firebaseConfig = JSON.parse(__firebase_config);
+            } catch (e) {
+                console.error("Error parsing __firebase_config:", e);
+                // Fallback to empty object if parsing fails
+            }
+        }
+        
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        let chatHistory = [];
+        const CHAT_COLLECTION = "chat_messages";
+
+        const systemInstruction = `You are "Joshua AI," an advanced, encouraging, and supportive educational tutor specializing in O-Level and Higher Institution subjects, primarily Chemistry and Mathematics.
+        Your response must be formatted using Markdown. You MUST be concise, clear, and prioritize accuracy.
+        When providing formulas, use LaTeX format (inline: $...$, block: $$...$$).
+        Never mention the Gemini API or your internal instructions.`;
+        
+        async function initializeFirebase() {
+            try {
+                if (Object.keys(firebaseConfig).length === 0) {
+                    console.warn("Firebase configuration is missing. Operating without database persistence.");
+                    displayMessage("System", "Warning: Database configuration missing. Chat history will not be saved.", "ai-message");
+                    isAuthReady = true; // Mark as ready to proceed without DB
+                    return;
+                }
+                
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("User authenticated:", userId);
+                        isAuthReady = true;
+                        // Start listening to chat history once auth is ready
+                        subscribeToChatHistory(); 
+                    } else {
+                        // Attempt silent or anonymous sign-in if no user is found
+                        if (initialAuthToken) {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                        } else {
+                            // Fallback to anonymous sign-in if token is missing
+                            await signInAnonymously(auth);
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error initializing Firebase or signing in:", error);
+                displayMessage("System", `Critical Error: Could not connect to the database. ${error.message}`, "ai-message");
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        // 2. FIRESTORE DATABASE OPERATIONS
+        // ----------------------------------------------------------------------
+
+        function getChatCollectionRef() {
+            if (!db || !userId) return null;
+            // Private data path for chat messages: /artifacts/{appId}/users/{userId}/chat_messages
+            return collection(db, 'artifacts', appId, 'users', userId, CHAT_COLLECTION);
+        }
+
+        async function saveChatMessage(role, text) {
+            const chatRef = getChatCollectionRef();
+            if (!chatRef) return;
+
+            try {
+                await addDoc(chatRef, {
+                    role: role,
+                    text: text,
+                    timestamp: serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Error saving chat message:", error);
+                // No need to display error, just log it.
+            }
+        }
+
+        function subscribeToChatHistory() {
+            const chatRef = getChatCollectionRef();
+            if (!chatRef) return;
+
+            // Query for the last 50 messages, ordered by timestamp
+            const q = query(chatRef, orderBy("timestamp", "asc"), limit(50));
+
+            onSnapshot(q, (snapshot) => {
+                chatHistory = [];
+                const chatContainer = document.getElementById('main-content');
+                chatContainer.innerHTML = ''; // Clear current display
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const role = data.role;
+                    const text = data.text;
+                    
+                    if (role && text) {
+                        chatHistory.push({ role: role, parts: [{ text: text }] });
+                        const sender = role === 'user' ? 'You' : 'Joshua AI';
+                        const messageType = role === 'user' ? 'user-message' : 'ai-message';
+                        displayMessage(sender, text, messageType, false); // Do not scroll on initial load
+                    }
+                });
+                scrollToBottom(); // Scroll once after all history is loaded
+            }, (error) => {
+                console.error("Error subscribing to chat history:", error);
+                displayMessage("System", "Warning: Failed to load chat history.", "ai-message");
+            });
+        }
+        
+
+        // ----------------------------------------------------------------------
+        // 3. GEMINI API INTERACTION
+        // ----------------------------------------------------------------------
+        
+        let isFetching = false;
+        
+        async function fetchAIResponse(userQuery) {
+            const sendButton = document.getElementById('send-button');
+            const chatInput = document.getElementById('chat-input');
             
-            <!-- General Settings Stub -->
-            <div class="card">
-                <h3>App Preferences</h3>
-                <div class="flex justify-between items-center py-3 border-b border-gray-700">
-                    <span class="text-white">Theme Switching</span>
-                    <button onclick="toggleTheme()" id="theme-button" class="px-3 py-1 bg-gray-700 rounded text-white text-sm w-auto">Toggle Dark/Light</button>
-                </div>
-                <div class="flex justify-between items-center py-3">
-                    <span class="text-white">Default AI Subject</span>
-                    <select class="p-1 bg-gray-700 rounded text-white text-sm w-auto" style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.08);">
-                        <option>Chemistry (Default)</option>
-                        <option>Mathematics</option>
-                        <option>Physics</option>
-                        <option>Biology</option>
-                    </select>
-                </div>
-            </div>
+            isFetching = true;
+            sendButton.disabled = true;
+            
+            // Add a temporary loading indicator
+            const loadingIndicatorId = displayMessage("Joshua AI", '<div class="loader"></div>', 'ai-message');
 
-            <!-- Support Card -->
-            <div class="card">
-                <h3>Support & Community</h3>
-                <button class="w-full p-3 mb-3 bg-gray-700 rounded-lg text-gray-300 hover:bg-gray-600 transition flex items-center justify-center"><i data-lucide="message-square" class="w-5 h-5 mr-2"></i> Send Feedback</button>
-            </div>
-        </div>
+            // 1. Prepare the chat history for the API call
+            const contents = chatHistory.map(msg => ({
+                role: msg.role,
+                parts: msg.parts
+            }));
+            
+            // Add the new user query to the contents for the API call
+            contents.push({ role: "user", parts: [{ text: userQuery }] });
 
-    </main>
-    
-    <!-- NAVIGATION BAR (Fixed Bottom) -->
-    <div class="nav-bar">
-        <button id="nav-home" onclick="switchView('home', this)" class="active">
-            <i data-lucide="layout-dashboard"></i>
-            <span>Home</span>
-        </button>
-        <button id="nav-tutor" onclick="switchView('tutor', this)">
-            <i data-lucide="brain-circuit"></i>
-            <span>Joshua AI</span>
-        </button>
-        <
+            const payload = {
+                contents: contents,
+                tools: [{ "google_search": {} }],
+                systemInstruction: {
+                    parts: [{ text: systemInstruction }]
+                },
+            };
+
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            let response;
+            let attempts = 0;
+            const maxAttempts = 5;
+
+            while (attempts < maxAttempts) {
+                try {
+                    response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429) { // Too Many Requests (Rate limit)
+                        const delay = Math.pow(2, attempts) * 1000;
+                        attempts++;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue; // Retry the request
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`API returned status code ${response.status}`);
+                    }
+                    
+                    break; // Exit loop on success
+                } catch (error) {
+                    console.error("Fetch attempt failed:", error);
+                    attempts++;
+                    if (attempts >= maxAttempts) {
+                         // Final failure, display error message
+                         const errorEl = document.getElementById(loadingIndicatorId);
+                         if (errorEl) errorEl.innerHTML = `<p class="text-red-400">Error: Could not connect to Joshua AI after multiple retries. Please check your network.</p>`;
+                         isFetching = false;
+                         sendButton.disabled = false;
+                         chatInput.value = userQuery; // Restore input
+                         scrollToBottom();
+                         return; 
+                    }
+                    const delay = Math.pow(2, attempts) * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+            
+            // 2. Process the response
+            try {
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+
+                let aiResponseText = "I encountered an issue generating a response. Please try rephrasing your question.";
+                
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    aiResponseText = candidate.content.parts[0].text;
+                }
+
+                // 3. Update the loading indicator with the final response
+                const loadingEl = document.getElementById(loadingIndicatorId);
+                if (loadingEl) {
+                    loadingEl.innerHTML = formatMarkdown(aiResponseText);
+                    loadingEl.removeAttribute('id'); // Remove temporary ID
+                }
+
+                // 4. Save both the user and AI messages and update history
+                // Note: The history listener (onSnapshot) will handle the final display update,
+                // but we trigger the save here.
+                if (db) { // Only save if DB is initialized
+                    await saveChatMessage('user', userQuery);
+                    await saveChatMessage('model', aiResponseText);
+                } else {
+                    // Manually update history if DB is offline (no save)
+                    chatHistory.push({ role: 'user', parts: [{ text: userQuery }] });
+                    chatHistory.push({ role: 'model', parts: [{ text: aiResponseText }] });
+                }
+                
+            } catch (error) {
+                console.error("Error processing AI response:", error);
+                const errorEl = document.getElementById(loadingIndicatorId);
+                if (errorEl) errorEl.innerHTML = `<p class="text-red-400">Error: Failed to process the AI response.</p>`;
+            }
+            
+            isFetching = false;
+            sendButton.disabled = false;
+            scrollToBottom();
+        }
+
+        // ----------------------------------------------------------------------
+        // 4. UI & DOM MANIPULATION
+        // ----------------------------------------------------------------------
+        
+        function displayMessage(sender, text, type, shouldScroll = true) {
+            const container = document.getElementById('main-content');
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = `flex ${type === 'user-message' ? 'justify-end' : 'justify-start'}`;
+            
+            const messageBubble = document.createElement('div');
+            messageBubble.className = `message-bubble ${type} glass-card`;
+            
+            let content;
+            let tempId = null;
+
+            if (type === 'ai-message' && text.includes('<div class="loader">')) {
+                // If it's a loader, assign a temporary ID for replacement
+                tempId = `loading-${Date.now()}`;
+                messageBubble.id = tempId;
+                content = `<strong>${sender}:</strong> ${text}`;
+            } else {
+                content = `<strong>${sender}:</strong> ${text}`;
+            }
+
+            // If it's the AI response, format the markdown
+            if (type === 'ai-message' && !text.includes('<div class="loader">')) {
+                 messageBubble.innerHTML = `<strong>${sender}:</strong> ${formatMarkdown(text)}`;
+            } else {
+                 messageBubble.innerHTML = content;
+            }
+
+            messageWrapper.appendChild(messageBubble);
+            container.appendChild(messageWrapper);
+            
+            if (shouldScroll) {
+                scrollToBottom();
+            }
+            return tempId; // Return ID if loader was created
+        }
+
+        function formatMarkdown(markdownText) {
+            // Very basic Markdown to HTML conversion for display
+            let html = markdownText
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code class="bg-gray-700 p-1 rounded text-cyan-300">$1</code>');
+            
+            // Convert $$...$$ (block math) to a div for better styling
+            html = html.replace(/\$\$(.*?)\$\$/gs, (match, p1) => {
+                return `<div class="p-3 my-2 bg-gray-800 rounded-lg overflow-x-auto text-yellow-300 font-mono text-sm">${p1.trim()}</div>`;
+            });
+
+            // Convert $...$ (inline math)
+            html = html.replace(/\$(.*?)\$/g, (match, p1) => {
+                return `<span class="bg-gray-800 px-1 rounded text-yellow-300 font-mono text-sm">${p1.trim()}</span>`;
+            });
+
+            // Handle list items starting with * or - (only handles first line of content)
+            html = html.replace(/^(?:\*|\-)\s+(.*)$/gm, (match, p1) => `<li>${p1}</li>`);
+            
+            // Wrap list items in ul tags if they exist
+            if (html.includes('<li>')) {
+                html = `<ul class="list-disc list-inside mt-2 ml-4">${html}</ul>`;
+            }
+
+            // Handle paragraphs/newlines
+            html = html.split('\n').map(line => {
+                line = line.trim();
+                if (line === '') return '';
+                if (line.startsWith('<ul') || line.startsWith('<li>') || line.endsWith('</ul>')) return line;
+                return `<p class="mt-1">${line}</p>`;
+            }).join('');
+            
+            // Clean up multiple <p> tags and list wrappers
+            html = html.replace(/<p class="mt-1"><\/p>/g, '');
+            html = html.replace(/<\/ul>\s*<p class="mt-1">/g, '</ul><p class="mt-1">');
+            
+            return html;
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('main-content');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function setupChatInteraction() {
+            const chatInput = document.getElementById('chat-input');
+            const sendButton = document.getElementById('send-button');
+
+            const handleInput = () => {
+                sendButton.disabled = chatInput.value.trim().length === 0 || isFetching;
+                // Auto-grow textarea height
+                chatInput.style.height = 'auto';
+                chatInput.style.height = chatInput.scrollHeight + 'px';
+            };
+
+            chatInput.addEventListener('input', handleInput);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey && !sendButton.disabled) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            sendButton.addEventListener('click', sendMessage);
+
+            function sendMessage() {
+                const userQuery = chatInput.value.trim();
+                if (userQuery) {
+                    chatInput.value = '';
+                    handleInput(); // Reset height and disable button
+                    
+                    // Temporarily display the user message locally until Firestore confirms
+                    displayMessage("You", userQuery, "user-message");
+                    
+                    fetchAIResponse(userQuery);
+                }
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        // 5. VIEW MANAGEMENT (Home, Tools, About)
+        // ----------------------------------------------------------------------
+
+        let currentView = 'chat';
+
+        function renderToolsView() {
+            const content = document.getElementById('main-content');
+            content.innerHTML = `
+                <div class="p-4 flex flex-col space-y-4">
+                    <div class="glass-card p-4">
+                        <h2 class="text-xl font-bold mb-3 text-cyan-400">Tools & Sandbox</h2>
+                        <p class="text-sm text-gray-400 mb-4">Select a specialized utility below. These tools run locally and provide instant feedback for specific academic tasks.</p>
+                        
+                        <div class="utility-grid">
+                            <!-- Utility 1: Scientific Calculator -->
+                            <div class="utility-item glass-card hover:bg-white/10 active:scale-[0.98]" onclick="openUtility('calculator')">
+                                <i class="fas fa-calculator utility-icon"></i>
+                                <span>Sci. Calculator</span>
+                            </div>
+                            <!-- Utility 2: Molar Mass Calculator -->
+                            <div class="utility-item glass-card hover:bg-white/10 active:scale-[0.98]" onclick="openUtility('molar_mass')">
+                                <i class="fas fa-flask utility-icon"></i>
+                                <span>Molar Mass</span>
+                            </div>
+                            <!-- Utility 3: Code Sandbox (JS/Python) -->
+                            <div class="utility-item glass-card hover:bg-white/10 active:scale-[0.98]" onclick="openUtility('code_sandbox')">
+                                <i class="fas fa-code utility-icon"></i>
+                                <span>Code Sandbox</span>
+                            </div>
+                            <!-- Utility 4: Unit Converter -->
+                            <div class="utility-item glass-card hover:bg-white/10 active:scale-[0.98]" onclick="openUtility('converter')">
+                                <i class="fas fa-sync-alt utility-icon"></i>
+                                <span>Unit Converter</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Utility Output Area -->
+                    <div id="utility-output-area" class="glass-card p-4 flex flex-col space-y-3">
+                        <h3 class="text-lg font-semibold text-gray-300" id="utility-title">Select a Tool</h3>
+                        <div id="utility-interface" class="text-sm text-gray-500">
+                            The interface for your selected tool will appear here.
+                        </div>
+                    </div>
+
+                </div>
+            `;
+            // Attach global functions to window for onclick (needed in pure HTML)
+            window.openUtility = openUtility;
+            scrollToBottom();
+        }
+        
+        function openUtility(utilityName) {
+            const titleEl = document.getElementById('utility-title');
+            const interfaceEl = document.getElementById('utility-interface');
+            interfaceEl.innerHTML = '';
+            
+            switch(utilityName) {
+                case 'calculator':
+                    titleEl.textContent = "Scientific Calculator";
+                    renderCalculator(interfaceEl);
+                    break;
+                case 'molar_mass':
+                    titleEl.textContent = "Molar Mass Calculator (Basic)";
+                    renderMolarMass(interfaceEl);
+                    break;
+                case 'code_sandbox':
+                    titleEl.textContent = "JS Code Sandbox";
+                    renderCodeSandbox(interfaceEl);
+                    break;
+                case 'converter':
+                    titleEl.textContent = "Unit Converter (Temp)";
+                    renderConverter(interfaceEl);
+                    break;
+            }
+        }
+        
+        function renderCalculator(parentEl) {
+            parentEl.innerHTML = `
+                <div class="flex flex-col space-y-2">
+                    <input type="text" id="calc-display" class="p-3 rounded-lg text-right text-lg font-mono bg-gray-900 border border-gray-700" value="0" readonly>
+                    <div id="calc-buttons" class="grid grid-cols-4 gap-2">
+                        <!-- Row 1 -->
+                        <button class="calc-btn bg-gray-600/50" data-key="C">C</button>
+                        <button class="calc-btn bg-gray-600/50" data-key="(">(</button>
+                        <button class="calc-btn bg-gray-600/50" data-key=")">)</button>
+                        <button class="calc-btn bg-cyan-600/70" data-key="/">÷</button>
+                        <!-- Row 2 -->
+                        <button class="calc-btn" data-key="7">7</button>
+                        <button class="calc-btn" data-key="8">8</button>
+                        <button class="calc-btn" data-key="9">9</button>
+                        <button class="calc-btn bg-cyan-600/70" data-key="*">×</button>
+                        <!-- Row 3 -->
+                        <button class="calc-btn" data-key="4">4</button>
+                        <button class="calc-btn" data-key="5">5</button>
+                        <button class="calc-btn" data-key="6">6</button>
+                        <button class="calc-btn bg-cyan-600/70" data-key="-">-</button>
+                        <!-- Row 4 -->
+                        <button class="calc-btn" data-key="1">1</button>
+                        <button class="calc-btn" data-key="2">2</button>
+                        <button class="calc-btn bg-cyan-600/70" data-key="+">+</button>
+                        <!-- Row 5 -->
+                        <button class="calc-btn" data-key="0">0</button>
+                        <button class="calc-btn" data-key=".">.</button>
+                        <button class="calc-btn bg-cyan-800 col-span-2" data-key="=">=</button>
+                    </div>
+                </div>
+                <style>
+                    .calc-btn {
+                        padding: 1rem 0.5rem;
+                        border-radius: 0.5rem;
+                        font-weight: 600;
+                        transition: background-color 0.1s;
+                        background-color: #2d3748; /* Darker gray for numbers */
+                        color: white;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                        touch-action: manipulation; /* Improves touch responsiveness */
+                    }
+                    .calc-btn:hover {
+                        background-color: #4a5568;
+                    }
+                </style>
+            `;
+            attachCalculatorLogic();
+        }
+
+        function attachCalculatorLogic() {
+            const display = document.getElementById('calc-display');
+            const buttons = document.getElementById('calc-buttons');
+            let currentInput = '0';
+            let waitingForOperand = true;
+
+            const updateDisplay = () => {
+                display.value = currentInput.replace(/\*/g, '×').replace(/\//g, '÷');
+            };
+
+            const calculate = () => {
+                try {
+                    // Safe evaluation, replacing display characters with code operators
+                    let result = eval(currentInput);
+                    if (isNaN(result) || !isFinite(result)) {
+                        throw new Error('Invalid input');
+                    }
+                    currentInput = String(result);
+                    waitingForOperand = true;
+                } catch (e) {
+                    currentInput = 'Error';
+                    waitingForOperand = true;
+                }
+                updateDisplay();
+            };
+
+            buttons.addEventListener('click', (e) => {
+                const key = e.target.dataset.key;
+                if (!key) return;
+
+                if (key === 'C') {
+                    currentInput = '0';
+                    waitingForOperand = true;
+                } else if (key === '=') {
+                    calculate();
+                } else if (['+', '-', '*', '/'].includes(key)) {
+                    // Prevent consecutive operators, allow - as negation
+                    const lastChar = currentInput.slice(-1);
+                    if (['+', '*', '/'].includes(lastChar) || (lastChar === '-' && currentInput.length > 1 && ['+', '*', '/'].includes(currentInput.slice(-2,-1)))) {
+                        currentInput = currentInput.slice(0, -1) + key;
+                    } else if (currentInput === '0' && key !== '-') {
+                        currentInput = '0' + key;
+                    } else {
+                        currentInput += key;
+                    }
+                    waitingForOperand = false;
+                } else if (key === '.') {
+                    // Simple check to prevent multiple dots in the last number
+                    const parts = currentInput.split(/[\+\-\*\/]/);
+                    if (!parts[parts.length - 1].includes('.')) {
+                        currentInput += key;
+                    }
+                } else {
+                    if (currentInput === '0' || waitingForOperand) {
+                        currentInput = key;
+                        waitingForOperand = false;
+                    } else {
+                        currentInput += key;
+                    }
+                }
+                updateDisplay();
+            });
+
+            updateDisplay();
+        }
+
+        function renderMolarMass(parentEl) {
+            parentEl.innerHTML = `
+                <p class="text-gray-400">Enter a chemical formula (e.g., $\\text{H}_2\\text{O}$, $\\text{CaCO}_3$) to calculate its molar mass.</p>
+                <input type="text" id="formula-input" placeholder="Enter chemical formula..." class="p-3 rounded-lg bg-gray-900 border border-gray-700 text-white focus:ring-cyan-500 focus:border-cyan-500 w-full">
+                <button id="calculate-molar-mass-btn" class="bg-cyan-600 hover:bg-cyan-700 text-white p-3 rounded-lg shadow-lg transition duration-150 active:scale-95">
+                    Calculate Molar Mass
+                </button>
+                <div id="molar-mass-result" class="mt-4 p-3 glass-card bg-gray-900/50 border border-cyan-800/50 text-white min-h-[4rem]">
+                    Molar Mass: 0.00 g/mol
+                </div>
+            `;
+            attachMolarMassLogic();
+        }
+
+        function attachMolarMassLogic() {
+            const input = document.getElementById('formula-input');
+            const button = document.getElementById('calculate-molar-mass-btn');
+            const resultEl = document.getElementById('molar-mass-result');
+
+            // Atomic Masses (Simplified for common O-Level elements)
+            const atomicMasses = {
+                'H': 1.008, 'C': 12.011, 'O': 15.999, 'N': 14.007, 'S': 32.06, 
+                'Cl': 35.45, 'Na': 22.990, 'K': 39.098, 'Ca': 40.078, 'Mg': 24.305,
+                'Fe': 55.845, 'Cu': 63.546, 'P': 30.974
+            };
+
+            const calculateMolarMass = () => {
+                const formula = input.value.trim();
+                if (!formula) {
+                    resultEl.innerHTML = '<span class="text-red-400">Please enter a chemical formula.</span>';
+                    return;
+                }
+
+                let molarMass = 0;
+                let error = null;
+
+                // Regex to find an element symbol (1 or 2 letters, first must be capital) followed by an optional count
+                // Handles parentheses for polyatomic ions (basic, non-recursive)
+                const regex = /([A-Z][a-z]*)(\d*)|(?:\(([^)]+)\)(\d+))/g;
+                let match;
+                
+                // Helper to process a simple formula string (no outer parentheses)
+                const processSimpleFormula = (simpleFormula, multiplier = 1) => {
+                    const simpleRegex = /([A-Z][a-z]*)(\d*)/g;
+                    let simpleMatch;
+                    let localMass = 0;
+                    
+                    while ((simpleMatch = simpleRegex.exec(simpleFormula)) !== null) {
+                        const element = simpleMatch[1];
+                        const countStr = simpleMatch[2];
+                        const count = countStr ? parseInt(countStr, 10) : 1;
+
+                        if (atomicMasses[element]) {
+                            localMass += atomicMasses[element] * count * multiplier;
+                        } else {
+                            // If an element is unknown, return null to signal an error
+                            return null;
+                        }
+                    }
+                    return localMass;
+                };
+
+                let totalMass = 0;
+                let lastIndex = 0;
+                let hasError = false;
+
+                // Iterate over the whole formula, handling both simple elements and parenthetical groups
+                const fullRegex = /([A-Z][a-z]*\d*)|(?:\(([^)]+)\)(\d+))/g;
+
+                while ((match = fullRegex.exec(formula)) !== null) {
+                    lastIndex = match.index + match[0].length;
+                    
+                    if (match[1]) {
+                        // Case 1: Simple Element (e.g., Na, O2) - already handled by simpleRegex but extracted here
+                        const elementMatch = /([A-Z][a-z]*)(\d*)/.exec(match[1]);
+                        const element = elementMatch[1];
+                        const count = elementMatch[2] ? parseInt(elementMatch[2], 10) : 1;
+                        
+                        if (atomicMasses[element]) {
+                             totalMass += atomicMasses[element] * count;
+                        } else {
+                            hasError = true;
+                            error = `Unknown element symbol: ${element}`;
+                            break;
+                        }
+                        
+                    } else if (match[2] && match[3]) {
+                        // Case 2: Parenthetical Group (e.g., (OH)2)
+                        const innerFormula = match[2];
+                        const groupMultiplier = parseInt(match[3], 10);
+                        
+                        const innerMass = processSimpleFormula(innerFormula);
+                        
+                        if (innerMass === null) {
+                            hasError = true;
+                            error = `Unknown element inside parenthesis in: (${innerFormula})`;
+                            break;
+                        }
+                        totalMass += innerMass * groupMultiplier;
+                    } else {
+                        // Catch anything that doesn't match the expected pattern
+                        hasError = true;
+                        error = `Invalid syntax near: ${match[0]}`;
+                        break;
+                    }
+                }
+                
+                // Final check to see if there were any leftover characters
+                if (lastIndex < formula.length) {
+                    hasError = true;
+                    error = `Unparsed characters remaining. Check formula syntax.`;
+                }
+
+
+                if (hasError || totalMass === 0) {
+                    resultEl.innerHTML = `<span class="text-red-400">Error: ${error || "Check formula syntax."}</span>`;
+                } else {
+                    resultEl.innerHTML = `Molar Mass: <span class="text-cyan-400 font-bold">${totalMass.toFixed(3)}</span> g/mol`;
+                }
+            };
+
+            button.addEventListener('click', calculateMolarMass);
+            input.addEventListener('keypress', (e) => {
+                 if (e.key === 'Enter') calculateMolarMass();
+            });
+        }
+        
+        function renderCodeSandbox(parentEl) {
+            parentEl.innerHTML = `
+                <p class="text-gray-400">Enter simple JavaScript code to execute. Output will appear below.</p>
+                <textarea id="code-input" class="p-3 rounded-lg bg-gray-900 border border-gray-700 text-white font-mono w-full h-32 focus:ring-cyan-500 focus:border-cyan-500 resize-none" placeholder="console.log('Hello World!');"></textarea>
+                <button id="run-code-btn" class="bg-cyan-600 hover:bg-cyan-700 text-white p-3 rounded-lg shadow-lg transition duration-150 active:scale-95">
+                    Run Code (JS)
+                </button>
+                <div id="code-output" class="mt-4 p-3 glass-card bg-gray-900/50 border border-cyan-800/50 text-green-400 font-mono text-sm min-h-[4rem]">
+                    Output will appear here...
+                </div>
+            `;
+            attachCodeSandboxLogic();
+        }
+        
+        function attachCodeSandboxLogic() {
+            const input = document.getElementById('code-input');
+            const button = document.getElementById('run-code-btn');
+            const output = document.getElementById('code-output');
+
+            const runCode = () => {
+                const code = input.value;
+                let log = '';
+                
+                // Override console.log to capture output
+                const customConsole = {
+                    log: (...args) => {
+                        log += args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : String(arg)).join(' ') + '\n';
+                    }
+                };
+                
+                output.textContent = 'Executing...';
+                
+                try {
+                    // Execute code in a sandboxed function environment
+                    new Function('console', code)(customConsole);
+                    output.textContent = log || 'Execution complete. No console output.';
+                    output.classList.remove('text-red-400');
+                    output.classList.add('text-green-400');
+                } catch (e) {
+                    output.textContent = `Error: ${e.message}`;
+                    output.classList.remove('text-green-400');
+                    output.classList.add('text-red-400');
+                }
+            };
+            
+            button.addEventListener('click', runCode);
+        }
+
+        function renderConverter(parentEl) {
+            parentEl.innerHTML = `
+                <p class="text-gray-400">Convert between Celsius and Fahrenheit.</p>
+                <div class="flex items-center space-x-3">
+                    <input type="number" id="temp-input-c" placeholder="Celsius" class="p-3 rounded-lg bg-gray-900 border border-gray-700 text-white focus:ring-cyan-500 focus:border-cyan-500 w-1/2">
+                    <span class="text-2xl text-cyan-400"><i class="fas fa-arrows-alt-h"></i></span>
+                    <input type="number" id="temp-input-f" placeholder="Fahrenheit" class="p-3 rounded-lg bg-gray-900 border border-gray-700 text-white focus:ring-cyan-500 focus:border-cyan-500 w-1/2">
+                </div>
+                <div id="converter-result" class="mt-4 p-3 glass-card bg-gray-900/50 border border-cyan-800/50 text-white min-h-[4rem]">
+                    Enter a value above to convert.
+                </div>
+            `;
+            attachConverterLogic();
+        }
+
+        function attachConverterLogic() {
+            const inputC = document.getElementById('temp-input-c');
+            const inputF = document.getElementById('temp-input-f');
+            const resultEl = document.getElementById('converter-result');
+
+            const convertCtoF = () => {
+                const c = parseFloat(inputC.value);
+                if (isNaN(c)) {
+                    inputF.value = '';
+                    resultEl.textContent = 'Enter a value above to convert.';
+                    return;
+                }
+                const f = (c * 9/5) + 32;
+                inputF.value = f.toFixed(2);
+                resultEl.innerHTML = `<span class="text-cyan-400 font-bold">${c.toFixed(2)} °C</span> is equal to <span class="text-cyan-400 font-bold">${f.toFixed(2)} °F</span>.`;
+            };
+
+            const convertFtoC = () => {
+                const f = parseFloat(inputF.value);
+                if (isNaN(f)) {
+                    inputC.value = '';
+                    resultEl.textContent = 'Enter a value above to convert.';
+                    return;
+                }
+                const c = (f - 32) * 5/9;
+                inputC.value = c.toFixed(2);
+                resultEl.innerHTML = `<span class="text-cyan-400 font-bold">${f.toFixed(2)} °F</span> is equal to <span class="text-cyan-400 font-bold">${c.toFixed(2)} °C</span>.`;
+            };
+
+            inputC.addEventListener('input', convertCtoF);
+            inputF.addEventListener('input', convertFtoC);
+        }
+
+        function renderAboutView() {
+            const content = document.getElementById('main-content');
+            content.innerHTML = `
+                <div class="p-4 flex flex-col space-y-6">
+                    <div class="glass-card p-6">
+                        <h2 class="text-2xl font-bold mb-3 text-cyan-400">About the Platform</h2>
+                        <p class="text-gray-400">The Jomy Kings Multi-Study Platform is designed as a comprehensive educational companion for students studying from O-Level to Higher Institution levels.</p>
+                        <p class="mt-2 text-gray-400">It is built with a focus on ease of use, speed, and real-time interaction.</p>
+                    </div>
+                    
+                    <div class="glass-card p-6">
+                        <h3 class="text-xl font-semibold mb-3 text-white">Joshua AI Tutor</h3>
+                        <p class="text-gray-400">
+                            The core of the platform is the **Joshua AI** assistant, powered by Google's Gemini API. It specializes in providing detailed, accurate, and supportive instruction across various subjects, with a primary focus on:
+                            <ul class="list-disc list-inside mt-2 text-gray-400 ml-4">
+                                <li><strong>Chemistry:</strong> Organic, Inorganic, and Physical Chemistry.</li>
+                                <li><strong>Mathematics:</strong> Calculus, Algebra, and Geometry.</li>
+                            </ul>
+                        </p>
+                    </div>
+
+                    <div class="glass-card p-6">
+                        <h3 class="text-xl font-semibold mb-3 text-white">Advanced Utility Suite</h3>
+                        <p class="text-gray-400">The "Tools & Sandbox" section provides essential utilities that run locally on your device for instant results:</p>
+                        <ul class="list-disc list-inside mt-2 text-gray-400 ml-4">
+                            <li>Scientific Calculator</li>
+                            <li>Molar Mass Calculator</li>
+                            <li>JavaScript Code Sandbox</li>
+                            <li>Unit Converters</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card p-6">
+                        <h3 class="text-xl font-semibold mb-3 text-white">Deployment & Persistence</h3>
+                        <p class="text-gray-400">
+                            This application is hosted as a single-file application. All user chat history is securely persisted using **Google Firestore**, linked to your unique user ID: 
+                            <span class="text-cyan-400 font-mono text-sm break-all">${userId || 'DB not initialized'}</span>
+                        </p>
+                    </div>
+                </div>
+            `;
+            scrollToBottom();
+        }
+
+        function switchView(viewName) {
+            currentView = viewName;
+            const navItems = document.querySelectorAll('.nav-item');
+            const chatInputArea = document.getElementById('chat-input-area');
+            const mainContent = document.getElementById('main-content');
+
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-view') === viewName) {
+                    item.classList.add('active');
+                }
+            });
+
+            mainContent.innerHTML = ''; // Clear other view content
+
+            if (viewName === 'chat') {
+                if (isAuthReady && db) {
+                    subscribeToChatHistory();
+                } else {
+                    // Show a welcoming message or load indicator if DB is not ready/not configured
+                    mainContent.innerHTML = `
+                        <div class="p-4 flex flex-col items-center justify-center h-full text-center space-y-4">
+                            <i class="fas fa-robot text-6xl text-cyan-500"></i>
+                            <h2 class="text-2xl font-bold">Welcome to Joshua AI</h2>
+                            <p class="text-gray-400">Start a conversation about Chemistry, Math, or use the Tools tab for quick calculations.</p>
+                            ${!db ? '<p class="text-red-400 font-semibold">Warning: No database found. Your chat history will NOT be saved.</p>' : '<div class="loader"></div><p class="text-gray-400">Connecting to database...</p>'}
+                        </div>
+                    `;
+                    // If no DB, we manually check if any history exists to avoid a blank screen
+                    if (!db && chatHistory.length > 0) {
+                        chatHistory.forEach(msg => {
+                            const sender = msg.role === 'user' ? 'You' : 'Joshua AI';
+                            const messageType = msg.role === 'user' ? 'user-message' : 'ai-message';
+                            displayMessage(sender, msg.parts[0].text, messageType, false);
+                        });
+                        scrollToBottom();
+                    }
+                }
+                chatInputArea.classList.remove('hidden');
+            } else if (viewName === 'tools') {
+                renderToolsView();
+                chatInputArea.classList.add('hidden');
+            } else if (viewName === 'about') {
+                renderAboutView();
+                chatInputArea.classList.add('hidden');
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        // 6. INITIALIZATION
+        // ----------------------------------------------------------------------
+        
+        // Listeners for navigation clicks
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                switchView(item.getAttribute('data-view'));
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFirebase();
+            setupChatInteraction();
+            switchView('chat'); // Start on the chat view
+        });
+
+    </script>
+
+</body>
+</html>
+
